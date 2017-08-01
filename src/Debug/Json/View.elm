@@ -1,9 +1,21 @@
 module Debug.Json.View exposing (program, viewValue, viewString)
 
+{-| This module contains two main ways of debugging decoders
+
+The first approach is to test your decoder outside of your existing application. This takes in a url and a decoder,
+and then provides useful information based on the result
+
+@program
+
+The second approach is to allow you to embed decoder view inside your program.
+
+@viewValue, @viewString
+
+-}
+
 import Json.Encode
 import Json.Decode
 import Html exposing (Html)
-import Html.Lazy
 import Html.Attributes
 import Html.Events
 import Http
@@ -60,6 +72,14 @@ handleResponse result =
             DisplayValue json
 
 
+{-| Takes in a URL and a decoder, and produces a program which will run against that url
+
+The URL can be changed later at runtime through an input field
+
+    main =
+        program "/user.json" decodeUser
+
+-}
 program : String -> Json.Decode.Decoder a -> Program Never (Model a) (Msg a)
 program url decoder =
     Html.program
@@ -106,10 +126,6 @@ viewUrl model =
         ]
 
 
-unit =
-    ()
-
-
 view : Model a -> Html (Msg a)
 view model =
     Html.div
@@ -129,7 +145,6 @@ view model =
                 ]
                 []
             , Html.node "script"
-                --[]
                 [ Html.Attributes.src "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
                 , Html.Attributes.attribute "onload" "setTimeout(function() {window.hljs.initHighlighting()}, 100);"
                 ]
@@ -138,6 +153,11 @@ view model =
         ]
 
 
+{-| Takes in a decoder and a value, then runs the decoder on the value
+
+    viewValue decodeUser someJson
+
+-}
 viewValue : Json.Decode.Decoder a -> Json.Decode.Value -> Html msg
 viewValue decoder value =
     case Json.Decode.decodeValue decoder value of
@@ -162,6 +182,11 @@ viewValue decoder value =
                 ]
 
 
+{-| Takes in a decoder and a string, then runs the decoder against the string
+
+    viewString decodeUser "{ \"name\" : \"noah\", \"age\": 26 }"
+
+-}
 viewString : Json.Decode.Decoder a -> String -> Html msg
 viewString decoder value =
     case Json.Decode.decodeString decoder value of

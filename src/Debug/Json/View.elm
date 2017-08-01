@@ -5,11 +5,11 @@ module Debug.Json.View exposing (program, viewValue, viewString)
 The first approach is to test your decoder outside of your existing application. This takes in a url and a decoder,
 and then provides useful information based on the result
 
-@program
+@docs program
 
 The second approach is to allow you to embed decoder view inside your program.
 
-@viewValue, @viewString
+@docs viewValue, viewString
 
 -}
 
